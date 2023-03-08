@@ -669,7 +669,6 @@ async def alexaprivate(client: Client, message: Message):
 
     chatdb = MongoClient(MONGO_URL)
     chatai = chatdb["Word"]["WordDb"]
-    slang_words = ["word1", "word2", "word3"] # define the slang words
     contains_slang = False
     for word in slang_words:
         if re.search(fr"\b{word}\b", message.text, re.IGNORECASE):
