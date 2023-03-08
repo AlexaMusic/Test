@@ -4,3 +4,4 @@ requests
 tgcrypto==1.2.2
 asyncio
 psutil
+motor
