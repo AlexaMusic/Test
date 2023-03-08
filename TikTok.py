@@ -171,7 +171,7 @@ async def must_join_channel(bot: Client, msg: Message):
     
 @bot.on_message(filters.command("repo") & filters.private & ~filters.edited)
 async def repo(client, message):
-    await add_served_user(m.from_user.id)
+    await add_served_user(message.from_user.id)
     await message.reply_photo(
         photo=f"https://telegra.ph/file/2fabd1c33e888e0533891.jpg",
         caption=f"""━━━━━━━━━━━━━━━━━━━━━━━━
