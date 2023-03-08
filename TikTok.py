@@ -1,5 +1,6 @@
 from pyrogram import Client, filters
 from TikTokApi import TikTokApi
+import os
 
 
 API_ID = os.environ.get("API_ID", None) 
