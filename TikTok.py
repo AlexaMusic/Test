@@ -222,9 +222,18 @@ async def stats(client, m: Message):
     await asyncio.sleep(1)
     await alexaai.edit("**ɪ ᴀᴍ ᴄᴏʟʟᴇᴄᴛɪɴɢ sᴛᴀᴛᴜs**")
     await asyncio.sleep(1)
+    await alexaai.delete()    
     copypast_lawdey = len(await get_served_users())
     matlabi_jhanto = len(await get_served_chats())
-    await alexaai.edit("🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {copypast_lawdey}\n🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {matlabi_jhanto}\n🌹 ➛ **ᴘʏʀᴏ ᴠᴇʀsɪᴏɴ** : {pyrover}\n**──────────────**")     
+    matlabi_chudo = len(await get_gbans_count())
+    tgm = f"""
+➥ 🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {copypast_lawdey}
+➥ 🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {matlabi_jhanto}
+➥ 🌹 ➛ **ᴛᴏᴛᴀʟ ʙᴀɴ ᴜsᴇʀs** : {matlabi_chudo}
+➥ 🌹 ➛ **ᴘʏʀᴏ ᴠᴇʀsɪᴏɴ** : {pyrover}
+
+**──────────────**"""
+    await m.reply(tgm, disable_web_page_preview=True)
 
 
 @bot.on_message(
