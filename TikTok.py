@@ -669,6 +669,7 @@ async def alexaprivate(client: Client, message: Message):
 
     chatdb = MongoClient(MONGO_URL)
     chatai = chatdb["Word"]["WordDb"]
+    slang_words = ["word1", "word2", "word3"] # define the slang words
     contains_slang = False
     for word in slang_words:
         if re.search(fr"\b{word}\b", message.text, re.IGNORECASE):
@@ -686,44 +687,45 @@ async def alexaprivate(client: Client, message: Message):
             await message.reply_text("Please don't use slang language with me.")
             return
     if not message.reply_to_message:
-       await bot.send_chat_action(message.chat.id, "typing")
-       K = []  
-       if message.animation:
-           is_chat = chatai.find({"word": message.animation.file_unique_id})
-       else:
-           is_chat = chatai.find({"word": message.text})                 
-       for x in is_chat:
-           K.append(x['text'])
-       hey = random.choice(K)
-       is_text = chatai.find_one({"text": hey})
-       Yo = is_text['check']
-       if Yo == "sticker":
-           await message.reply_sticker(f"{hey}")
-       elif Yo == "animation":
-           await message.reply_animation(f"{hey}")
-       else:
-           await message.reply_text(f"{hey}")
-   if message.reply_to_message:            
-       getme = await bot.get_me()
-       bot_id = getme.id       
-       if message.reply_to_message.from_user.id == bot_id:                    
-           await bot.send_chat_action(message.chat.id, "typing")
-           K = []  
-           if message.animation:
-               is_chat = chatai.find({"word": message.animation.file_unique_id})
-           else:
-               is_chat = chatai.find({"word": message.text})                 
-           for x in is_chat:
-               K.append(x['text'])
-           hey = random.choice(K)
-           is_text = chatai.find_one({"text": hey})
-           Yo = is_text['check']
-           if Yo == "sticker":
-               await message.reply_sticker(f"{hey}")
-           elif Yo == "animation":
-               await message.reply_animation(f"{hey}")
-           else:
-               await message.reply_text(f"{hey}")
+        await bot.send_chat_action(message.chat.id, "typing")
+        K = []
+        if message.animation:
+            is_chat = chatai.find({"word": message.animation.file_unique_id})
+        else:
+            is_chat = chatai.find({"word": message.text})
+        for x in is_chat:
+            K.append(x['text'])
+        hey = random.choice(K)
+        is_text = chatai.find_one({"text": hey})
+        Yo = is_text['check']
+        if Yo == "sticker":
+            await message.reply_sticker(f"{hey}")
+        elif Yo == "animation":
+            await message.reply_animation(f"{hey}")
+        else:
+            await message.reply_text(f"{hey}")
+    if message.reply_to_message:
+        getme = await bot.get_me()
+        bot_id = getme.id
+        if message.reply_to_message.from_user.id == bot_id:
+            await bot.send_chat_action(message.chat.id, "typing")
+            K = []
+            if message.animation:
+                is_chat = chatai.find({"word": message.animation.file_unique_id})
+            else:
+                is_chat = chatai.find({"word": message.text})
+            for x in is_chat:
+                K.append(x['text'])
+            hey = random.choice(K)
+            is_text = chatai.find_one({"text": hey})
+            Yo = is_text['check']
+            if Yo == "sticker":
+                await message.reply_sticker(f"{hey}")
+            elif Yo == "animation":
+                await message.reply_animation(f"{hey}")
+            else:
+                await message.reply_text(f"{hey}")
+
 
 @bot.on_message(
     (
