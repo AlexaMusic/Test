@@ -225,7 +225,7 @@ async def stats(client, m: Message):
     await alexaai.delete()    
     copypast_lawdey = len(await get_served_users())
     matlabi_jhanto = len(await get_served_chats())
-    matlabi_chudo = len(await get_gbans_count())
+    matlabi_chudo = await get_gbans_count()
     tgm = f"""
 ➥ 🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {copypast_lawdey}
 ➥ 🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {matlabi_jhanto}
