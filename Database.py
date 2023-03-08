@@ -9,7 +9,6 @@ as you want
 
 
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
-from Alexa.config import MONGO_URL
 from typing import Dict, List, Union
 import os
 
