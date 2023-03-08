@@ -101,7 +101,7 @@ slang_words = ['fuck', 'land', 'mc', 'bc', 'chut', 'madar)', 'bak', 'bbiab', 'bb
 
 @bot.on_message(filters.command("start") & filters.private & ~filters.edited)
 async def start(client, m: Message):
-    await add_served_user(message.from_user.id)
+    await add_served_user(m.from_user.id)
     await m.delete()
     alexaai = await m.reply("🤭🤏✌️")
     await asyncio.sleep(1)
@@ -171,7 +171,7 @@ async def must_join_channel(bot: Client, msg: Message):
     
 @bot.on_message(filters.command("repo") & filters.private & ~filters.edited)
 async def repo(client, message):
-    await add_served_user(message.from_user.id)
+    await add_served_user(m.from_user.id)
     await message.reply_photo(
         photo=f"https://telegra.ph/file/2fabd1c33e888e0533891.jpg",
         caption=f"""━━━━━━━━━━━━━━━━━━━━━━━━
