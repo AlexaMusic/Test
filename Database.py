@@ -6,12 +6,15 @@ This program is free software: you can redistribute it and can modify
 as you want
 """
 
-MONGO_URL = os.environ.get("MONGO_URL", None)
+
 
 from motor.motor_asyncio import AsyncIOMotorClient as MongoClient
 from Alexa.config import MONGO_URL
 from typing import Dict, List, Union
+import os
 
+
+MONGO_URL = os.environ.get("MONGO_URL", None)
 
 MONGODB_CLI = MongoClient(MONGO_URL)
 db = MONGODB_CLI.wbb
