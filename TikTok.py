@@ -222,9 +222,9 @@ async def stats(client, m: Message):
     await asyncio.sleep(1)
     await alexaai.edit("**ɪ ᴀᴍ ᴄᴏʟʟᴇᴄᴛɪɴɢ sᴛᴀᴛᴜs**")
     await asyncio.sleep(1)
-    served_users = len(await get_served_users())
-    served_chats = len(await get_served_chats())
-    await alexaai.edit("🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {}\n🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {}\n🌹 ➛ **ᴘʏʀᴏ ᴠᴇʀsɪᴏɴ** : {}\n**──────────────**")     
+    copypast_lawdey = len(await get_served_users())
+    matlabi_jhanto = len(await get_served_chats())
+    await alexaai.edit("🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {copypast_lawdey}\n🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {matlabi_jhanto}\n🌹 ➛ **ᴘʏʀᴏ ᴠᴇʀsɪᴏɴ** : {pyrover}\n**──────────────**")     
 
 
 @bot.on_message(
