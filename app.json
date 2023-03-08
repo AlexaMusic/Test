@@ -1,0 +1,31 @@
+{
+  "name": "Download TikTok",
+  "description": "Advanced Database Backend Chatbot Based On Pyrogram Userbot",
+  "logo": "https://telegra.ph/file/71fdfc3bca2950bf3878c.jpg",
+  "keywords": [
+    "telegram",
+    "bot",
+    "python",
+    "pyrogram"
+  ],
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Pyrogram string session get it from @Session_Generator_Robot",
+      "required": true
+    },        
+    "API_ID": {
+      "description": "telegram api id here",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "telegram api hash here",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "stack": "container"
+}
