@@ -215,7 +215,7 @@ async def chatbotofd(client, message):
     if is_alexa:
         await message.reply_text(f"ᴄʜᴀᴛʙɪᴛ ɪs ᴀʟʀᴇᴀᴅʏ ᴅɪsᴀʙʟᴇᴅ")
 
-@bot.on_message(filters.command(["stats", "status", "gstats"]) & OWNER)
+bot.on_message(command("stats") & filters.user(OWNER) & ~filters.edited)
 async def stats(c: Client, m: Message):
     served_users = len(await get_served_users())
     served_chats = len(await get_served_chats())
