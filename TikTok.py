@@ -644,15 +644,15 @@ async def alexastickerai(client: Client, message: Message):
                         elif message.animation:
                             await message.reply_animation(f"{hey}")
         if not message.reply_to_message.from_user.id == bot_id:          
-            if not contains_slang:
-                if message.text:
-               is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id if message.reply_to_message.sticker else message.reply_to_message.animation.file_unique_id if message.reply_to_message.animation else message.reply_to_message.text, "text": message.text})
-               if not is_chat:
-                   toggle.insert_one({"word": message.reply_to_message.sticker.file_unique_id if message.reply_to_message.sticker else message.reply_to_message.animation.file_unique_id if message.reply_to_message.animation else message.reply_to_message.text, "text": message.text, "check": "text"})
-           if message.sticker:                 
-               is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id})
-               if not is_chat:
-                   chatai.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id, "check": "none"})
+        if not contains_slang:
+            if message.text:
+                is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id if message.reply_to_message.sticker else message.reply_to_message.animation.file_unique_id if message.reply_to_message.animation else message.reply_to_message.text, "text": message.text})
+                if not is_chat:
+                    toggle.insert_one({"word": message.reply_to_message.sticker.file_unique_id if message.reply_to_message.sticker else message.reply_to_message.animation.file_unique_id if message.reply_to_message.animation else message.reply_to_message.text, "text": message.text, "check": "text"})
+        if message.sticker:                 
+            is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id})
+            if not is_chat:
+                chatai.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id, "check": "none"})
                
 
 
