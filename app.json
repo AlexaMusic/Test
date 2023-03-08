@@ -1,5 +1,5 @@
 {
-  "name": "Download TikTok",
+  "name": "Alexa AI Userbot",
   "description": "Advanced Database Backend Chatbot Based On Pyrogram Userbot",
   "logo": "https://telegra.ph/file/71fdfc3bca2950bf3878c.jpg",
   "keywords": [
@@ -11,6 +11,14 @@
   "env": {
     "BOT_TOKEN": {
       "description": "Pyrogram string session get it from @Session_Generator_Robot",
+      "required": true
+    },        
+    "MONGO_URL": {
+      "description": "mongo db url here",
+      "required": true
+    },
+    "MUST_JOIN": {
+      "description": "Your channel or group username",
       "required": true
     },        
     "API_ID": {
@@ -29,3 +37,4 @@
   ],
   "stack": "container"
 }
+
