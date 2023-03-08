@@ -198,7 +198,7 @@ IF HAVE ANY QUESTION THEN CONTACT » TO » MY » [OWNER] @Jankari_Ki_Duniya""",
     & ~filters.private)
 async def chatbotofd(client, message):
     alexadb = MongoClient(MONGO_URL)    
-    alexa = alexadb["AleXadB"]["Alexa"]     
+    alexa = alexadb["AlexaDb"]["Alexa"]     
     if message.from_user:
         user = message.from_user.id
         chat_id = message.chat.id
@@ -215,11 +215,16 @@ async def chatbotofd(client, message):
     if is_alexa:
         await message.reply_text(f"ᴄʜᴀᴛʙɪᴛ ɪs ᴀʟʀᴇᴀᴅʏ ᴅɪsᴀʙʟᴇᴅ")
 
-bot.on_message(command("stats") & filters.user(OWNER) & ~filters.edited)
-async def stats(c: Client, m: Message):
+@bot.on_message(command("stats") & filters.user(OWNER) & ~filters.edited)
+async def stats(client, m: Message):
+    await m.delete()
+    alexaai = await m.reply("🤭🤏✌️")
+    await asyncio.sleep(1)
+    await alexaai.edit("**sᴛᴀʀᴛɪɴɢ ʙᴏᴛ**")
+    await asyncio.sleep(1)
     served_users = len(await get_served_users())
     served_chats = len(await get_served_chats())
-    await m.reply(Data.STATS.format(served_users, served_chats, pyrover))     
+    await alexaai.edit("🌹 ➛ **ᴛᴏᴛᴀʟ ᴜsᴇʀs** : {}\n🌹 ➛ **ᴛᴏᴛᴀʟ ɢʀᴏᴜᴘs** : {}\n🌹 ➛ **ᴘʏʀᴏ ᴠᴇʀsɪᴏɴ** : {}\n**──────────────**")     
 
 
 @bot.on_message(
@@ -227,7 +232,7 @@ async def stats(c: Client, m: Message):
     & ~filters.private)
 async def chatboton(client, message):
     alexadb = MongoClient(MONGO_URL)    
-    alexa = alexadb["AleXadB"]["Alexa"]     
+    alexa = alexadb["AlexaDb"]["Alexa"]     
     if message.from_user:
         user = message.from_user.id
         chat_id = message.chat.id
@@ -509,7 +514,7 @@ async def alexaai(client: Client, message: Message):
 
    if not message.reply_to_message:
        alexadb = MongoClient(MONGO_URL)
-       alexa = alexadb["AleXadB"]["Alexa"] 
+       alexa = alexadb["AlexaDb"]["Alexa"] 
        is_alexa = alexa.find_one({"chat_id": message.chat.id})
        if not is_alexa:
            await bot.send_chat_action(message.chat.id, "typing")
@@ -529,7 +534,7 @@ async def alexaai(client: Client, message: Message):
    
    if message.reply_to_message:  
        alexadb = MongoClient(MONGO_URL)
-       alexa = alexadb["AleXadB"]["Alexa"] 
+       alexa = alexadb["AlexaDb"]["Alexa"] 
        is_alexa = alexa.find_one({"chat_id": message.chat.id})    
        getme = await bot.get_me()
        bot_id = getme.id                             
@@ -575,7 +580,7 @@ async def alexastickerai(client: Client, message: Message):
 
    if not message.reply_to_message:
        alexadb = MongoClient(MONGO_URL)
-       alexa = alexadb["Alexa"]["Alexa"] 
+       alexa = alexadb["AlexaDb"]["Alexa"] 
        is_alexa = alexa.find_one({"chat_id": message.chat.id})
        if not is_alexa:
            await bot.send_chat_action(message.chat.id, "typing")
@@ -595,7 +600,7 @@ async def alexastickerai(client: Client, message: Message):
    
    if message.reply_to_message:
        alexadb = MongoClient(MONGO_URL)
-       alexa = alexadb["alexaDb"]["alexa"] 
+       alexa = alexadb["AlexaDb"]["Alexa"] 
        is_alexa = alexa.find_one({"chat_id": message.chat.id})
        getme = await bot.get_me()
        bot_id = getme.id
