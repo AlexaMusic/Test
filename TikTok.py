@@ -1,5 +1,6 @@
 from pyrogram import Client, filters
-from TikTokApi import TikTokApi
+from pyrogram.types import Message
+import requests
 import os
 
 
@@ -15,16 +16,18 @@ app = Client(
     bot_token = BOT_TOKEN
 )
 
-api = TikTokApi.get_instance()
+@app.on_message(filters.command(["start"]))
+async def start_handler(client, message):
+    await message.reply_text("Hi! Send me a TikTok video link and I'll download it for you without a watermark.")
 
-@app.on_message(filters.command("download") & filters.private)
-async def download_tiktok(client, message):
-    url = message.text.split()[1]
-    video_bytes = api.get_video_by_url(url, no_watermark=True)
-    await client.send_video(
-        chat_id=message.chat.id,
-        video=video_bytes,
-        caption="Here's your TikTok video!",
-    )
+
+@app.on_message(filters.regex(r"^(https?\:\/\/)?(www\.)?tiktok\.com\/.+"))
+async def download_handler(client, message):
+    url = message.text
+    await message.reply_chat_action("typing")
+    response = requests.get(f"https://www.tiktok.com/oembed?url={url}")
+    video_url = response.json()["video_url"].replace("https://", "http://")
+    await message.reply_video(video_url)
+
 
 app.run()
