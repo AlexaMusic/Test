@@ -218,9 +218,9 @@ async def chatbotofd(client, message):
 @bot.on_message(command("stats") & filters.user(OWNER) & ~filters.edited)
 async def stats(client, m: Message):
     await m.delete()
-    alexaai = await m.reply("🤭🤏✌️")
+    alexaai = await m.reply("**ᴡᴀɪᴛ**️")
     await asyncio.sleep(1)
-    await alexaai.edit("**sᴛᴀʀᴛɪɴɢ ʙᴏᴛ**")
+    await alexaai.edit("**ɪ ᴀᴍ ᴄᴏʟʟᴇᴄᴛɪɴɢ sᴛᴀᴛᴜs**")
     await asyncio.sleep(1)
     served_users = len(await get_served_users())
     served_chats = len(await get_served_chats())
