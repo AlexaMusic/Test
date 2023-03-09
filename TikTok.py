@@ -741,8 +741,6 @@ async def alexaprivategif(client: Client, message: Message):
         K = []
         if message.animation:
             is_chat = chatai.find({"word": message.animation.file_unique_id})
-        elif message.sticker:
-            is_chat = chatai.find({"word": message.sticker.file_unique_id})
         for x in is_chat:
             K.append(x["text"])
         hey = random.choice(K)
@@ -760,15 +758,6 @@ async def alexaprivategif(client: Client, message: Message):
                     "check": "animation",
                 }
             )
-        elif message.sticker:
-            chatai.insert_one(
-                {
-                    "word": message.sticker.file_unique_id,
-                    "text": message.sticker.file_id,
-                    "check": "sticker",
-                }
-            )
-
     if message.reply_to_message:
         getme = await bot.get_me()
         bot_id = getme.id
@@ -777,8 +766,6 @@ async def alexaprivategif(client: Client, message: Message):
             K = []
             if message.animation:
                 is_chat = chatai.find({"word": message.animation.file_unique_id})
-            elif message.sticker:
-                is_chat = chatai.find({"word": message.sticker.file_unique_id})
             for x in is_chat:
                 K.append(x["text"])
             hey = random.choice(K)
