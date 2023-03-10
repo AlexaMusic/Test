@@ -103,7 +103,7 @@ slang_words = ['fuck', 'land', 'mc', 'bc', 'chut', 'madar)', 'bak', 'bbiab', 'bb
 
 @bot.on_message(filters.new_chat_members)
 async def on_new_chat_members(client: Client, message: Message):
-    if client.get_me().id in [user.id for user in message.new_chat_members]:
+    if (await client.get_me()).id in [user.id for user in message.new_chat_members]:
         added_by = message.from_user.first_name if message.from_user else "unknown user"
         matlabi_jhanto = message.chat.title
         chat_id = message.chat.id
