@@ -95,9 +95,23 @@ def get_readable_time(seconds: int) -> str:
     ping_time += ":".join(time_list)
     return ping_time
 
+async def log_message(chat_id: int, message: str):
+    await bot.send_message(chat_id=chat_id, text=message)
 
 slang_words = ['fuck', 'land', 'mc', 'bc', 'chut', 'madar)', 'bak', 'bbiab', 'bbl', 'bbs', 'brb', 'btw', 'cul8r', 'f2f', 'fwiw', 'fyi', 'g2g', 'gtg', 'ic', 'idk', 'ikr', 'imho', 'imo', 'irl', 'jk', 'jmo', 'k', 'l8r', 'lmao', 'lmk', 'lol', 'nbd', 'nvm', 'omg', 'rofl', 'stfu', 'thx', 'tmi', 'ttyl', 'wtf', 'wyd', 'yolo', 'ywy', 'zzz']
 
+@bot.on_message(filters.new_chat_members)
+async def on_new_chat_members(client: Client, message: Message):
+    if client.get_me().id in [user.id for user in message.new_chat_members]:
+        added_by = message.from_user.first_name if message.from_user else "unknown user"
+        matlabi_jhanto = message.chat.title
+        chat_id = message.chat.id
+        if message.chat.username:
+            chatusername = f"@{message.chat.username}"
+        else:
+            chatusername = "ᴩʀɪᴠᴀᴛᴇ ᴄʜᴀᴛ"
+        log_text = f"Bot added to new group '{matlabi_jhanto}' ({chat_id}) by {added_by} Chat Usernaem {chatusername}"
+        await log_message(LOG_GROUP_ID, log_text)
 
 @bot.on_message(filters.command("start") & filters.private & ~filters.edited)
 async def start(client, m: Message):
