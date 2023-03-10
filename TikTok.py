@@ -40,6 +40,7 @@ MONGO_URL = os.environ.get("MONGO_URL", None)
 MUST_JOIN = os.environ.get("MUST_JOIN", None)
 
 OWNER = 6174058850
+LOG_GROUP_ID = -1001700938995
 chat_watcher_group = 10
 BANNED_USERS = filters.user()
 
