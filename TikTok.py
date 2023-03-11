@@ -59,7 +59,7 @@ async def start(client, m: Message):
         ),
     )
   
-@bot.on_message(filters.voice_chat_members)
+@bot.on_message(filters.voice_chat)
 async def on_voice_chat_members(client, message):
     for user in message.voice_chat_members_added:
         if user.is_self:
