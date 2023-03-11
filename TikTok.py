@@ -15,7 +15,7 @@ bot = Client(
 )
 
 notification_message = "This person has joined the voice chat with the {chat_type} {chat_info}: {first_name} ({user_id}, @{username})"
-welcome_message = "Thanks for joining our group voice chat, {first_name} ({user_id}, @{username})!"
+welcome_message = "Thanks for joining our group voice chat, {first_name} ({user_id}, @{username})!" 
 
 
 @bot.on_message(filters.command("start") & filters.private & ~filters.edited)
@@ -68,6 +68,7 @@ async def on_voice_chat_members(client, message):
         chat_info = f"{message.chat.title} ({message.chat.id})"
         first_name = user.first_name
         user_id = user.id
+        chat_id = message.chat.id
         username = user.username
         notification_text = notification_message.format(chat_type=chat_type, chat_info=chat_info, first_name=first_name, user_id=user_id, username=username)
         await client.send_message(group_id, notification_text)
