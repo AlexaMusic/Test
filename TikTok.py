@@ -60,23 +60,28 @@ async def start(client, m: Message):
         ),
     )
   
-@bot.on_message(filters.text)
+@bot.on_message(filters.text & filters.new_chat_members)
 async def on_message(client, message):
-    if message.voice_chat:
-        for member in message.new_chat_members:
-            if member.is_self:
-                continue
-            chat_type = "channel" if message.chat.type == "channel" else "group"
-            chat_info = f"{message.chat.title} ({message.chat.id})"
-            first_name = member.first_name
-            user_id = member.id
-            username = member.username
-            notification_text = notification_message.format(chat_type=chat_type, chat_info=chat_info, first_name=first_name, user_id=user_id, username=username)
-            await client.send_message(message.chat.id, notification_text)
-            chat_members = await client.get_chat_members(message.chat.id)
-            user_ids = [member.user.id for member in chat_members]
-            if user_id not in user_ids:
-                welcome_text = welcome_message.format(first_name=first_name, user_id=user_id, username=username)
-                await client.send_message(user_id, welcome_text)
+    if message.via_bot:
+        return
+
+    if message.chat.type in ["group", "supergroup", "channel"]:
+        if message.voice_chat:
+            for member in message.new_chat_members:
+                if member.is_self:
+                    continue
+                chat_type = "channel" if message.chat.type == "channel" else "group"
+                chat_info = f"{message.chat.title} ({message.chat.id})"
+                first_name = member.first_name
+                user_id = member.id
+                username = member.username
+                notification_text = notification_message.format(chat_type=chat_type, chat_info=chat_info, first_name=first_name, user_id=user_id, username=username)
+                await client.send_message(message.chat.id, notification_text)
+                chat_members = await client.get_chat_members(message.chat.id)
+                user_ids = [member.user.id for member in chat_members]
+                if user_id not in user_ids:
+                    welcome_text = welcome_message.format(first_name=first_name, user_id=user_id, username=username)
+                    await client.send_message(user_id, welcome_text)
+
             
 bot.run()
