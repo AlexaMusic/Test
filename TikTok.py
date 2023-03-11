@@ -59,13 +59,26 @@ async def start(client, m: Message):
         ),
     )
   
-@bot.on_message(filters.voice_chat_started)
-async def on_voice_chat_started(client, message):
-    for member in message.voice_chat.participants:
-        if member.user.is_bot:
-            continue
-        welcome_text = welcome_message.format(first_name=member.user.first_name, user_id=member.user.id, username=member.user.username)
-        await message.reply_text(welcome_text)
+@bot.on_message(filters.text)
+async def on_message(client, message):
+    chat = await client.get_chat(message.chat.id)
+    if chat.type == "voice":
+        for member in message.new_chat_members:
+            if member.is_self:
+                continue
+            chat_type = "channel" if chat.type == "channel" else "group"
+            chat_info = f"{chat.title} ({chat.id})"
+            first_name = member.first_name
+            user_id = member.id
+            username = member.username
+            notification_text = notification_message.format(chat_type=chat_type, chat_info=chat_info, first_name=first_name, user_id=user_id, username=username)
+            await client.send_message(chat.id, notification_text)
+            chat_members = await client.get_chat_members(chat.id)
+            user_ids = [member.user.id for member in chat_members]
+            if user_id not in user_ids:
+                welcome_text = welcome_message.format(first_name=first_name, user_id=user_id, username=username)
+                await client.send_message(user_id, welcome_text)
+
 
             
 bot.run()
