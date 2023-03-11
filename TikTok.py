@@ -15,7 +15,7 @@ bot = Client(
     bot_token = BOT_TOKEN
 )
 
-welcome_message = "Welcome to the group voice chat, {first_name}! Your ID is {user_id} and your username is @{username}."
+welcome_message = "Welcome to the group voice chat, {first_name}! Your user ID is {user_id} and your username is @{username}."
 
 
 @bot.on_message(filters.command("start") & filters.private & ~filters.edited)
@@ -59,12 +59,12 @@ async def start(client, m: Message):
         ),
     )
   
-@bot.on_message(filters.voice_chat_members)
-async def on_voice_chat_members(client, message):
-    for user in message.voice_chat_members_added:
-        if user.is_self:
+@bot.on_message(filters.voice_chat_started)
+async def on_voice_chat_started(client, message):
+    for member in message.voice_chat.participants:
+        if member.user.is_bot:
             continue
-        welcome_text = welcome_message.format(first_name=user.first_name, user_id=user.id, username=user.username)
+        welcome_text = welcome_message.format(first_name=member.user.first_name, user_id=member.user.id, username=member.user.username)
         await message.reply_text(welcome_text)
 
             
