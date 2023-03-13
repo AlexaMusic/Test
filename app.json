@@ -17,6 +17,10 @@
       "description": "telegram api id here",
       "required": true
     },
+    "OPENAI_API_KEY": {
+      "description": "open ai api key",
+      "required": true
+    },
     "API_HASH": {
       "description": "telegram api hash here",
       "required": true
