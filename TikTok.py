@@ -1,5 +1,6 @@
 import os
 import requests
+import openai
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
@@ -7,6 +8,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 API_ID = os.environ.get("API_ID", None) 
 API_HASH = os.environ.get("API_HASH", None) 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
+openai.api_key = os.environ.get("OPENAI_API_KEY", None)
 
 bot = Client(
     "AlexaBot" ,
@@ -59,26 +61,38 @@ async def start(client, m: Message):
         ),
     )
   
-@bot.on_message(filters.text)
-async def on_message(client, message):
-    chat = await client.get_chat(message.chat.id)
-    if chat.type == "voice":
-        for member in message.new_chat_members:
-            if member.is_self:
-                continue
-            chat_type = "channel" if chat.type == "channel" else "group"
-            chat_info = f"{chat.title} ({chat.id})"
-            first_name = member.first_name
-            user_id = member.id
-            username = member.username
-            notification_text = notification_message.format(chat_type=chat_type, chat_info=chat_info, first_name=first_name, user_id=user_id, username=username)
-            await client.send_message(chat.id, notification_text)
-            chat_members = await client.get_chat_members(chat.id)
-            user_ids = [member.user.id for member in chat_members]
-            if user_id not in user_ids:
-                welcome_text = welcome_message.format(first_name=first_name, user_id=user_id, username=username)
-                await client.send_message(user_id, welcome_text)
+WELCOME_MESSAGE = """
+Hi there! I'm a language model trained by OpenAI. You can ask me anything and I'll try my best to respond. To get started, type /generate to generate some text.
+"""
 
+def generate_text(prompt):
+    response = openai.Completion.create(
+        engine="davinci",
+        prompt=prompt,
+        temperature=0.5,
+        max_tokens=1024,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+    )
+    return response.choices[0].text
 
+@bot.on_message(filters.command("start"))
+def start_command_handler(client, message):
+    client.send_message(
+        chat_id=message.chat.id,
+        text=WELCOME_MESSAGE,
+        reply_to_message_id=message.message_id,
+    )
+
+@bot.on_message(filters.command("generate"))
+def generate_command_handler(client, message):
+    prompt = "Ask me a question and I'll generate an answer!"
+    text = generate_text(prompt)
+    client.send_message(
+        chat_id=message.chat.id,
+        text=text,
+        reply_to_message_id=message.message_id,
+    )
             
 bot.run()
