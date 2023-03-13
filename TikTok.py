@@ -61,9 +61,9 @@ async def start(client, m: Message):
             ]
         ),
     )
-  
+
 async def generate_response(message_text: str) -> str:
-    response = await openai.Completion.create(
+    response = await asyncio.to_thread(openai.Completion.create,
         engine="davinci",
         prompt=f"Q: {message_text}\nA:",
         max_tokens=1024,
@@ -78,12 +78,15 @@ async def generate_response(message_text: str) -> str:
 
 @bot.on_message(filters.private)
 async def private_chat(client: Client, message: Message):
-    response_text = await generate_response(message.text)
-    await client.send_message(
-        chat_id=message.chat.id,
-        text=response_text,
-        reply_to_message_id=message.message_id
-    )
+    if message.text and message.text.lower().startswith("/generate"):
+        message_text = message.text[9:].strip()
+        response_text = await generate_response(message_text)
+        await client.send_message(
+            chat_id=message.chat.id,
+            text=response_text,
+            reply_to_message_id=message.message_id
+        )
+
 
 @bot.on_message(filters.group)
 async def group_chat(client: Client, message: Message):
@@ -91,13 +94,14 @@ async def group_chat(client: Client, message: Message):
         message.text.startswith(f"@{bot.me.username}")
         or message.text.startswith(bot.me.first_name)
     ):
-        response_text = await generate_response(message.text)
-        await client.send_message(
-            chat_id=message.chat.id,
-            text=response_text,
-            reply_to_message_id=message.message_id
-        )
-
-    
+        if message.text.lower().startswith("/generate"):
+            message_text = message.text[9:].strip()
+            response_text = await generate_response(message_text)
+            await client.send_message(
+                chat_id=message.chat.id,
+                text=response_text,
+                reply_to_message_id=message.message_id
+            )    
+ 
     
 bot.run()
