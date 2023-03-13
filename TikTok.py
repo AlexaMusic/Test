@@ -2,6 +2,7 @@ import os
 import requests
 import openai
 import asyncio
+from pyrogram.types import Message
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
@@ -61,38 +62,42 @@ async def start(client, m: Message):
         ),
     )
   
-WELCOME_MESSAGE = """
-Hi there! I'm a language model trained by OpenAI. You can ask me anything and I'll try my best to respond. To get started, type /generate to generate some text.
-"""
-
-def generate_text(prompt):
-    response = openai.Completion.create(
+async def generate_response(message_text: str) -> str:
+    response = await openai.Completion.create(
         engine="davinci",
-        prompt=prompt,
-        temperature=0.5,
+        prompt=f"Q: {message_text}\nA:",
         max_tokens=1024,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
+        n=1,
+        stop=None,
+        temperature=0.7,
     )
-    return response.choices[0].text
+    generated_text = response.choices[0].text.strip()
 
-@bot.on_message(filters.command("start"))
-def start_command_handler(client, message):
-    client.send_message(
+    return generated_text
+
+
+@bot.on_message(filters.private)
+async def private_chat(client: Client, message: Message):
+    response_text = await generate_response(message.text)
+    await client.send_message(
         chat_id=message.chat.id,
-        text=WELCOME_MESSAGE,
-        reply_to_message_id=message.message_id,
+        text=response_text,
+        reply_to_message_id=message.message_id
     )
 
-@bot.on_message(filters.command("generate"))
-def generate_command_handler(client, message):
-    prompt = "Ask me a question and I'll generate an answer!"
-    text = generate_text(prompt)
-    client.send_message(
-        chat_id=message.chat.id,
-        text=text,
-        reply_to_message_id=message.message_id,
-    )
-            
+@bot.on_message(filters.group)
+async def group_chat(client: Client, message: Message):
+    if message.text and (
+        message.text.startswith(f"@{bot.me.username}")
+        or message.text.startswith(bot.me.first_name)
+    ):
+        response_text = await generate_response(message.text)
+        await client.send_message(
+            chat_id=message.chat.id,
+            text=response_text,
+            reply_to_message_id=message.message_id
+        )
+
+    
+    
 bot.run()
