@@ -9,8 +9,8 @@
     "pyrogram"
   ],
   "env": {
-    "BOT_TOKEN": {
-      "description": "Pyrogram string session get it from @Session_Generator_Robot",
+    "LOG_ID": {
+      "description": "log id here",
       "required": true
     },        
     "MONGO_DB": {
