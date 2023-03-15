@@ -1,6 +1,5 @@
 import os
 import requests
-import openai
 import asyncio
 from pyrogram.types import Message
 from pymongo import MongoClient
@@ -20,6 +19,8 @@ db = mongo_client["approved_users_db"]
 approved_users_collection = db["approved_users"]
 
 WARNING_LIMIT = 3
+JHANTO_LOG_WORD = ["lamd", "bc", "madarchod"]
+
 
 def is_approved(user_id):
     return approved_users_collection.find_one({"user_id": user_id}) is not None
@@ -54,7 +55,12 @@ def handle_message(client, message):
     if not is_user_approved:
         message.reply("You are not an approved user.")
         return
-    increment_user_message_count(user_id)    
+    text = message.text.lower()
+    if any(word in text for word in JHANTO_LOG_WORD):
+        block_user(user_id)
+        message.reply("You have been blocked for using inappropriate language.")
+        return
+    increment_user_message_count(user_id)
     message_count = get_user_message_count(user_id)    
     if message_count >= WARNING_LIMIT:
         message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")    
