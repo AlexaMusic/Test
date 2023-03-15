@@ -13,12 +13,16 @@
       "description": "Pyrogram string session get it from @Session_Generator_Robot",
       "required": true
     },        
+    "MONGO_DB": {
+      "description": "mongo here",
+      "required": true
+    },
     "API_ID": {
       "description": "telegram api id here",
       "required": true
-    },
-    "OPENAI_API_KEY": {
-      "description": "open ai api key",
+    },    
+    "SESSION_NAME": {
+      "description": "pyro session",
       "required": true
     },
     "API_HASH": {
