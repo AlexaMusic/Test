@@ -3,105 +3,88 @@ import requests
 import openai
 import asyncio
 from pyrogram.types import Message
+from pymongo import MongoClient
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
 API_ID = os.environ.get("API_ID", None) 
 API_HASH = os.environ.get("API_HASH", None) 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
-openai.api_key = os.environ.get("OPENAI_API_KEY", None)
+MONGO_DB = os.environ.get("MONGO_DB", None)
+LOG_ID = os.environ.get("LOG_ID", None)
+SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
-bot = Client(
-    "AlexaBot" ,
-    api_id = API_ID,
-    api_hash = API_HASH ,
-    bot_token = BOT_TOKEN
-)
+client = Client(SESSION_NAME, API_ID, API_HASH)
 
-welcome_message = "Welcome to the group voice chat, {first_name}! Your user ID is {user_id} and your username is @{username}."
+mongo_client = MongoClient(MONGO_DB)
+db = mongo_client["approved_users_db"]
+approved_users_collection = db["approved_users"]
 
+WARNING_LIMIT = 3
 
-@bot.on_message(filters.command("start") & filters.private & ~filters.edited)
-async def start(client, m: Message):
-    await m.delete()
-    alexaai = await m.reply("🤭🤏✌️")
-    await asyncio.sleep(1)
-    await alexaai.edit("**sᴛᴀʀᴛɪɴɢ ʙᴏᴛ**")
-    await asyncio.sleep(1)
-    await alexaai.edit("**ɪ ᴀᴍ ᴅᴏɪɴɢ ᴍʏ ʟᴏᴠᴇ 💕**")
-    await alexaai.delete()
-    await asyncio.sleep(2)
-    umm = await m.reply_sticker("CAACAgIAAxkBAAEForNjAykaq_efq4Wd-9KZv-nNxJRn3AACIgMAAm2wQgO8x8PfoXC1eCkE")
-    await asyncio.sleep(2)
-    await m.reply_photo(
-        photo=f"https://telegra.ph/file/1730f54f033ad0d2b91d2.jpg",
-        caption=f"""━━━━━━━━━━━━━━━━━━━━━━━━\n\n✪ ᴛʜɪs ɪs ᴀʟᴇxᴀ ᴀɪ ᴀᴅᴠᴀɴᴄᴇᴅ ᴄʜᴀᴛʙᴏᴛ ʙᴀsᴇᴅ ᴏɴ ʙᴀᴄᴋᴇɴᴅ ᴅᴀᴛᴀʙᴀsᴇ\n✪ ᴛʜᴀɴᴋs ᴛᴏ  ᴀʟᴇxᴀ ᴛᴇᴀᴍ 🌼 ..\n\n┏━━━━━━━━━━━━━━━━━┓\n┣★ ᴏᴡɴᴇʀ    : [ᴀsᴀᴅ ᴀʟɪ](https://t.me/Dr_Asad_Ali)\n┣★ ᴜᴘᴅᴀᴛᴇs › : [ᴀʟᴇxᴀ ʜᴇʟᴘ](https://t.me/Alexa_BotUpdates)\n┣★ ʀᴇᴘᴏ › : [ᴀʟᴇxᴀ ᴀɪ ʀᴇᴘᴏ](https://github.com/TheTeamAlexa/AlexaAiMachineBot)\n┗━━━━━━━━━━━━━━━━━┛\n\n💞 ɪғ ʏᴏᴜ ʜᴀᴠᴇ ᴀɴʏ ǫᴜᴇsᴛɪᴏɴs ᴛʜᴇɴ\nᴅᴍ ᴛᴏ ᴍʏ [ᴏᴡɴᴇʀ](https://t.me/Jankari_Ki_Duniya) ᴍᴀᴋᴇ sᴜʀᴇ ᴛᴏ sᴛᴀʀ ᴏᴜʀ ᴘʀᴏᴊᴇᴄᴛ ...\n\n━━━━━━━━━━━━━━━━━━━━━━━━
-""",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "+ ᴀᴅᴅ ᴍᴇ +",
-                        url=f"https://t.me/ROCKS_KITTY_BOT?startgroup=true",
-                    )
-                ],
-                [
-                    InlineKeyboardButton(
-                        "🌼 ᴀʟᴇxᴀ ᴄʜᴀᴛ︎", url=f"https://t.me/Alexa_Help"
-                    ),
-                    InlineKeyboardButton(
-                        "ʀᴏᴄᴋs 🌷", url=f"https://t.me/Shayri_Music_Lovers"
-                    ),
-                ],
-                [
-                    InlineKeyboardButton(
-                        "💞 sᴛᴀғғ 💘", url="https://t.me/ROCKS_OFFICIAL/119"
-                    )
-                ],
-            ]
-        ),
-    )
+def is_approved(user_id):
+    return approved_users_collection.find_one({"user_id": user_id}) is not None
 
-async def generate_response(message_text: str) -> str:
-    response = await asyncio.to_thread(openai.Completion.create,
-        engine="davinci",
-        prompt=f"Q: {message_text}\nA:",
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.7,
-    )
-    generated_text = response.choices[0].text.strip()
+def add_approved_user(user_id):
+    approved_users_collection.insert_one({"user_id": user_id, "message_count": 0})
 
-    return generated_text
+def remove_approved_user(user_id):
+    approved_users_collection.delete_one({"user_id": user_id})
 
+def get_user_message_count(user_id):
+    user_document = approved_users_collection.find_one({"user_id": user_id})
+    if user_document is None:
+        return 0
+    return user_document.get("message_count", 0)
 
-@bot.on_message(filters.private)
-async def private_chat(client: Client, message: Message):
-    if message.text and message.text.lower().startswith("/generate"):
-        message_text = message.text[9:].strip()
-        response_text = await generate_response(message_text)
-        await client.send_message(
-            chat_id=message.chat.id,
-            text=response_text,
-            reply_to_message_id=message.message_id
-        )
+def increment_user_message_count(user_id):
+    user_document = approved_users_collection.find_one({"user_id": user_id})
+    if user_document is None:
+        add_approved_user(user_id)
+        user_document = {"user_id": user_id, "message_count": 0}
+    user_document["message_count"] += 1
+    approved_users_collection.replace_one({"user_id": user_id}, user_document)
 
+def block_user(user_id):
+    client.block_user(user_id)
 
-@bot.on_message(filters.group)
-async def group_chat(client: Client, message: Message):
-    if message.text and (
-        message.text.startswith(f"@{bot.me.username}")
-        or message.text.startswith(bot.me.first_name)
-    ):
-        if message.text.lower().startswith("/generate"):
-            message_text = message.text[9:].strip()
-            response_text = await generate_response(message_text)
-            await client.send_message(
-                chat_id=message.chat.id,
-                text=response_text,
-                reply_to_message_id=message.message_id
-            )    
- 
+@client.on_message(filters.private)
+def handle_message(client, message):
+    user_id = message.from_user.id
+    is_user_approved = is_approved(user_id)
+    if not is_user_approved:
+        message.reply("You are not an approved user.")
+        return
+    increment_user_message_count(user_id)    
+    message_count = get_user_message_count(user_id)    
+    if message_count >= WARNING_LIMIT:
+        message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")    
+    if message_count >= WARNING_LIMIT + 1:
+        block_user(user_id)
+        message.reply("You have been blocked for sending too many messages.")
+        return
+    log_channel = client.get_chat(LOG_ID)
+    user_first_name = message.from_user.first_name
+    log_message = f"{user_first_name}: {message.text}"
+    log_channel.send(log_message)
+    message.delete()
     
-bot.run()
+@client.on_message(filters.command("approve") & filters.private)
+def approve_command_handler(client, message):
+    user_id = message.from_user.id
+    if is_approved(user_id):
+        message.reply("You are already an approved user.")
+        return
+    add_approved_user(user_id)
+    message.reply("You have been approved as an authorized user.")
+
+@client.on_message(filters.command("disapprove") & filters.private)
+def disapprove_command_handler(client, message):
+    user_id = message.from_user.id
+    if not is_approved(user_id):
+        message.reply("You are not an approved user.")
+        return
+    remove_approved_user(user_id)
+    message.reply("You have been disapproved and removed from the authorized users list.")
+
+
+client.run()
