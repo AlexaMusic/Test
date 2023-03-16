@@ -48,11 +48,14 @@ def increment_user_message_count(user_id):
 def block_user(user_id):
     client.block_user(user_id)
 
-@client.on_message(filters.private)
+@Client.on_message(filters.private)
 def handle_message(client, message):
     user_id = message.from_user.id
-    is_user_approved = is_approved(user_id)
-    if not is_user_approved:
+    log_channel = client.get_chat(LOG_ID)
+    user_first_name = message.from_user.first_name
+    log_message = f"{user_first_name}: {message.text}"
+    log_channel.send(log_message)
+    if not is_approved(user_id):
         message.reply("You are not an approved user.")
         return
     text = message.text.lower()
@@ -67,14 +70,9 @@ def handle_message(client, message):
     if message_count >= WARNING_LIMIT + 1:
         block_user(user_id)
         message.reply("You have been blocked for sending too many messages.")
-        return
-    log_channel = client.get_chat(LOG_ID)
-    user_first_name = message.from_user.first_name
-    log_message = f"{user_first_name}: {message.text}"
-    log_channel.send(log_message)
     message.delete()
-    
-@client.on_message(filters.command("approve") & filters.private)
+        
+@Client.on_message(filters.command("approve")  & filters.me)
 def approve_command_handler(client, message):
     user_id = message.from_user.id
     if is_approved(user_id):
@@ -83,7 +81,7 @@ def approve_command_handler(client, message):
     add_approved_user(user_id)
     message.reply("You have been approved as an authorized user.")
 
-@client.on_message(filters.command("disapprove") & filters.private)
+@Client.on_message(filters.command("disapprove") & filters.me)
 def disapprove_command_handler(client, message):
     user_id = message.from_user.id
     if not is_approved(user_id):
