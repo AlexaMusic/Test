@@ -15,7 +15,7 @@ SESSION_NAME = os.environ.get("SESSION_NAME", None)
 userbot = Client(
     api_id=API_ID,
     api_hash=API_HASH,
-    session_string=SESSION_NAME,
+    session_name=SESSION_NAME,
     plugins=dict(root="TikTok.py"),
 )
 
