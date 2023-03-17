@@ -12,12 +12,13 @@ MONGO_DB = os.environ.get("MONGO_DB", None)
 LOG_ID = os.environ.get("LOG_ID", None)
 SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
-client = Client(SESSION_NAME, API_ID, API_HASH)
+userbot = Client(SESSION_NAME, API_ID, API_HASH)
 
 mongo_client = MongoClient(MONGO_DB)
 db = mongo_client["approved_users_db"]
 approved_users_collection = db["approved_users"]
 
+CMD_HANDLER = [".", "/"]
 WARNING_LIMIT = 3
 JHANTO_LOG_WORD = ["lamd", "bc", "madarchod"]
 
@@ -46,12 +47,14 @@ def increment_user_message_count(user_id):
     approved_users_collection.replace_one({"user_id": user_id}, user_document)
 
 def block_user(user_id):
-    client.block_user(user_id)
+    userbot.block_user(user_id)
 
-@Client.on_message(filters.private)
-def handle_message(client, message):
+@Client.on_message(
+    ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
+)
+def handle_message(client: Client, message: Message):
     user_id = message.from_user.id
-    log_channel = client.get_chat(LOG_ID)
+    log_channel = userbot.get_chat(LOG_ID)
     user_first_name = message.from_user.first_name
     log_message = f"{user_first_name}: {message.text}"
     log_channel.send(log_message)
@@ -72,8 +75,10 @@ def handle_message(client, message):
         message.reply("You have been blocked for sending too many messages.")
     message.delete()
         
-@Client.on_message(filters.command("approve")  & filters.me)
-def approve_command_handler(client, message):
+@Client.on_message(
+    filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
+)
+def approve_command_handler(client: Client, message: Message):
     user_id = message.from_user.id
     if is_approved(user_id):
         message.reply("You are already an approved user.")
@@ -81,8 +86,10 @@ def approve_command_handler(client, message):
     add_approved_user(user_id)
     message.reply("You have been approved as an authorized user.")
 
-@Client.on_message(filters.command("disapprove") & filters.me)
-def disapprove_command_handler(client, message):
+@Client.on_message(
+    filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
+)
+def disapprove_command_handler(client: Client, message: Message):
     user_id = message.from_user.id
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
@@ -91,4 +98,4 @@ def disapprove_command_handler(client, message):
     message.reply("You have been disapproved and removed from the authorized users list.")
 
 
-client.run()
+userbot.run()
