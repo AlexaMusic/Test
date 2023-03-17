@@ -57,7 +57,7 @@ def block_user(user_id):
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
 )
 async def handle_message(client: userbot, message: Message):
-    user_id = message.from_user.id
+    user_id = message.chat.id
     sender_name = message.from_user.first_name
     user_msg = message.text
     user_unme = message.from_user.username
@@ -83,7 +83,7 @@ async def handle_message(client: userbot, message: Message):
     filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
 )
 def approve_command_handler(client: userbot, message: Message):
-    user_id = message.from_user.id
+    user_id = message.chat.id
     if is_approved(user_id):
         message.reply("You are already an approved user.")
     else:
@@ -95,7 +95,7 @@ def approve_command_handler(client: userbot, message: Message):
     filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
 )
 def disapprove_command_handler(client: userbot, message: Message):
-    user_id = message.from_user.id
+    user_id = message.chat.id
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
     else:
