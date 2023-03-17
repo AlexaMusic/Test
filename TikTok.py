@@ -66,14 +66,17 @@ async def handle_message(client: userbot, message: Message):
         return
     increment_user_message_count(user_id)
     message_count = get_user_message_count(user_id)
-    if message_count >= WARNING_LIMIT:
-        await message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")
-    if message_count >= WARNING_LIMIT + 1:
+    approved = is_approved(user_id)
+    if approved:
+        reset_user_message_count(user_id)
+    if not approved and message_count >= WARNING_LIMIT:
+        await message.reply(f"Warning! You are not an approved user so you have a limitation on the number of messages you can send. You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")
+    if not approved and message_count >= WARNING_LIMIT + 1:
         await userbot.block_user(user_id)
         await message.reply("You have been blocked for sending too many messages.")
         return
-    if not is_approved(user_id):
-        await message.reply("You are not an approved user.")
+    if approved and message_count >= WARNING_LIMIT:
+        reset_user_message_count(user_id)
         
 @userbot.on_message(
     filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
