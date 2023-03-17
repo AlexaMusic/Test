@@ -63,21 +63,21 @@ async def handle_message(client: userbot, message: Message):
     user_unme = message.from_user.username
     await userbot.send_message(LOG_GROUP, f"{sender_name} send a message it's username {user_unme}: {user_msg}")
     if not is_approved(user_id):
-        message.reply("You are not an approved user.")
+        await message.reply("You are not an approved user.")
         return
     text = message.text.lower()
     if any(word in text for word in JHANTO_LOG_WORD):
         block_user(user_id)
-        message.reply("You have been blocked for using inappropriate language.")
+        await message.reply("You have been blocked for using inappropriate language.")
         return
     increment_user_message_count(user_id)
     message_count = get_user_message_count(user_id)    
     if message_count >= WARNING_LIMIT:
-        message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")    
+        await message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")    
     if message_count >= WARNING_LIMIT + 1:
         block_user(user_id)
-        message.reply("You have been blocked for sending too many messages.")
-    message.delete()
+        await message.reply("You have been blocked for sending too many messages.")
+    await message.delete()
         
 @userbot.on_message(
     filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
