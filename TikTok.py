@@ -70,18 +70,17 @@ async def handle_message(client: userbot, message: Message):
         await userbot.block_user(user_id)
         await message.reply("You have been blocked for using inappropriate language.")
         return
-    increment_user_message_count(user_id)
-    message_count = get_user_message_count(user_id)
-    approved = is_approved(user_id)
-    if approved:
-        reset_user_message_count(user_id)
-    if not approved and message_count >= WARNING_LIMIT:
-        await message.reply(f"Warning! You are not an approved user so you have a limitation on the number of messages you can send. You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")
-    if not approved and message_count >= WARNING_LIMIT + 1:
-        await userbot.block_user(user_id)
-        await message.reply("You have been blocked for sending too many messages.")
-        return
-    if approved and message_count >= WARNING_LIMIT:
+    await increment_user_message_count(user_id)
+    message_count = await get_user_message_count(user_id)
+    approved = await is_approved(user_id)
+    if not approved:
+        if message_count >= WARNING_LIMIT:
+            await message.reply(f"Warning! You are not an approved user so you have a limitation on the number of messages you can send. You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")
+        if message_count >= WARNING_LIMIT + 1:
+            await userbot.block_user(user_id)
+            await message.reply("You have been blocked for sending too many messages.")
+            return
+    else:
         reset_user_message_count(user_id)
         
 @userbot.on_message(
