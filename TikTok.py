@@ -66,7 +66,7 @@ async def handle_message(client: userbot, message: Message):
         if message_count >= WARNING_LIMIT + 1:
             await userbot.block_user(user_id)
             await message.reply("You have been blocked for sending too many messages.")
-        return
+            return
     text = message.text.lower()
     if any(word in text for word in JHANTO_LOG_WORD):
         await userbot.block_user(user_id)
