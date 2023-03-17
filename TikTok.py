@@ -49,6 +49,12 @@ def increment_user_message_count(user_id):
         user_document = {"user_id": user_id, "message_count": 0}
     user_document["message_count"] += 1
     approved_users_collection.replace_one({"user_id": user_id}, user_document)
+    
+def reset_user_message_count(user_id):
+    user_document = approved_users_collection.find_one({"user_id": user_id})
+    if user_document is not None:
+        user_document["message_count"] = 0
+        approved_users_collection.replace_one({"user_id": user_id}, user_document)
 
 @userbot.on_message(
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
@@ -99,4 +105,5 @@ def disapprove_command_handler(client: userbot, message: Message):
         message.reply("You have been disapproved and removed from the authorized users list.")
     message.delete()
 
+print(f"Userbot is running")      
 userbot.run()
