@@ -20,6 +20,7 @@ userbot = (
         session_string=SESSION_NAME,
         plugins=dict(root="TikTok.py"),
     )
+)
 
 mongo_client = MongoClient(MONGO_DB)
 db = mongo_client["approved_users_db"]
@@ -31,7 +32,7 @@ JHANTO_LOG_WORD = ["lamd", "bc", "madarchod"]
 
 
 def is_approved(user_id):
-    return approved_users_collection.find_one({"user_id": user_id}) is not None
+    return approved_users_collection.find_one({"user_id": user_id})
 
 def add_approved_user(user_id):
     approved_users_collection.insert_one({"user_id": user_id, "message_count": 0})
