@@ -50,9 +50,6 @@ def increment_user_message_count(user_id):
     user_document["message_count"] += 1
     approved_users_collection.replace_one({"user_id": user_id}, user_document)
 
-def block_user(user_id):
-    userbot.block_user(user_id)
-
 @userbot.on_message(
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
 )
@@ -67,7 +64,7 @@ async def handle_message(client: userbot, message: Message):
         return
     text = message.text.lower()
     if any(word in text for word in JHANTO_LOG_WORD):
-        await block_user(user_id)
+        await userbot.block_user(user_id)
         await message.reply("You have been blocked for using inappropriate language.")
         return
     increment_user_message_count(user_id)
@@ -75,9 +72,8 @@ async def handle_message(client: userbot, message: Message):
     if message_count >= WARNING_LIMIT:
         await message.reply(f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")    
     if message_count >= WARNING_LIMIT + 1:
-        await block_user(user_id)
+        await userbot.block_user(user_id)
         await message.reply("You have been blocked for sending too many messages.")
-    await message.delete()
         
 @userbot.on_message(
     filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
