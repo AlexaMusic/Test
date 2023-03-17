@@ -9,7 +9,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 API_ID = os.environ.get("API_ID", None) 
 API_HASH = os.environ.get("API_HASH", None) 
 MONGO_DB = os.environ.get("MONGO_DB", None)
-LOG_ID = os.environ.get("LOG_ID", None)
+LOG_GROUP = os.environ.get("LOG_GROUP", None)
 SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
 userbot = Client(
@@ -61,7 +61,7 @@ async def handle_message(client: userbot, message: Message):
     sender_name = message.from_user.first_name
     user_msg = message.text
     user_unme = message.from_user.username
-    await userbot.send_message(LOG_ID, f"{sender_name} send a message it's username {user_unme}: {user_msg}")
+    await userbot.send_message(LOG_GROUP, f"{sender_name} send a message it's username {user_unme}: {user_msg}")
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
         return
