@@ -51,7 +51,7 @@ def increment_user_message_count(user_id):
     approved_users_collection.replace_one({"user_id": user_id}, user_document)
 
 def block_user(user_id):
-    userbot.block_user(user_id)
+    await userbot.block_user(user_id)
 
 @userbot.on_message(
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
