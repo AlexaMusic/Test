@@ -6,10 +6,10 @@ from pymongo import MongoClient
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message
 
-API_ID = os.environ.get("API_ID", None) 
+API_ID = int(os.environ.get("API_ID", None))
 API_HASH = os.environ.get("API_HASH", None) 
 MONGO_DB = os.environ.get("MONGO_DB", None)
-LOG_GROUP = os.environ.get("LOG_GROUP", None)
+LOG_GROUP = int(os.environ.get("LOG_GROUP", None))
 SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
 userbot = Client(
