@@ -12,14 +12,11 @@ MONGO_DB = os.environ.get("MONGO_DB", None)
 LOG_ID = os.environ.get("LOG_ID", None)
 SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
-userbot = (
-    Client(
-        name="userbot",
-        api_id=API_ID,
-        api_hash=API_HASH,
-        session_string=SESSION_NAME,
-        plugins=dict(root="TikTok.py"),
-    )
+userbot = Client(
+    api_id=API_ID,
+    api_hash=API_HASH,
+    session_string=SESSION_NAME,
+    plugins=dict(root="TikTok.py"),
 )
 
 mongo_client = MongoClient(MONGO_DB)
