@@ -12,7 +12,14 @@ MONGO_DB = os.environ.get("MONGO_DB", None)
 LOG_ID = os.environ.get("LOG_ID", None)
 SESSION_NAME = os.environ.get("SESSION_NAME", None) 
 
-userbot = Client(SESSION_NAME, API_ID, API_HASH)
+userbot = (
+    Client(
+        name="userbot",
+        api_id=API_ID,
+        api_hash=API_HASH,
+        session_string=SESSION_NAME,
+        plugins=dict(root="TikTok.py"),
+    )
 
 mongo_client = MongoClient(MONGO_DB)
 db = mongo_client["approved_users_db"]
@@ -49,10 +56,10 @@ def increment_user_message_count(user_id):
 def block_user(user_id):
     userbot.block_user(user_id)
 
-@Client.on_message(
+@userbot.on_message(
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
 )
-def handle_message(client: Client, message: Message):
+def handle_message(client: userbot, message: Message):
     user_id = message.from_user.id
     log_channel = userbot.get_chat(LOG_ID)
     user_first_name = message.from_user.first_name
@@ -75,10 +82,10 @@ def handle_message(client: Client, message: Message):
         message.reply("You have been blocked for sending too many messages.")
     message.delete()
         
-@Client.on_message(
+@userbot.on_message(
     filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
 )
-def approve_command_handler(client: Client, message: Message):
+def approve_command_handler(client: userbot, message: Message):
     user_id = message.from_user.id
     if is_approved(user_id):
         message.reply("You are already an approved user.")
@@ -86,10 +93,10 @@ def approve_command_handler(client: Client, message: Message):
     add_approved_user(user_id)
     message.reply("You have been approved as an authorized user.")
 
-@Client.on_message(
+@userbot.on_message(
     filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
 )
-def disapprove_command_handler(client: Client, message: Message):
+def disapprove_command_handler(client: userbot, message: Message):
     user_id = message.from_user.id
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
