@@ -9,7 +9,7 @@
     "pyrogram"
   ],
   "env": {
-    "LOG_ID": {
+    "LOG_GROUP": {
       "description": "log id here",
       "required": true
     },        
