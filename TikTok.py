@@ -57,12 +57,12 @@ def block_user(user_id):
 @userbot.on_message(
     ~filters.me & filters.private & ~filters.bot & filters.incoming, group=69
 )
-def handle_message(client: userbot, message: Message):
+async def handle_message(client: userbot, message: Message):
     user_id = message.from_user.id
-    log_channel = userbot.get_chat(LOG_ID)
-    user_first_name = message.from_user.first_name
-    log_message = f"{user_first_name}: {message.text}"
-    log_channel.send(log_message)
+    sender_name = message.from_user.first_name
+    user_msg = message.text
+    user_unme = message.from_user.username
+    await userbot.send_message(LOG_ID, f"{sender_name} send a message it's username {user_unme}: {user_msg}")
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
         return
@@ -87,9 +87,10 @@ def approve_command_handler(client: userbot, message: Message):
     user_id = message.from_user.id
     if is_approved(user_id):
         message.reply("You are already an approved user.")
-        return
-    add_approved_user(user_id)
-    message.reply("You have been approved as an authorized user.")
+    else:
+        add_approved_user(user_id)
+        message.reply("You have been approved as an authorized user.")
+    message.delete()
 
 @userbot.on_message(
     filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
@@ -98,9 +99,9 @@ def disapprove_command_handler(client: userbot, message: Message):
     user_id = message.from_user.id
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
-        return
-    remove_approved_user(user_id)
-    message.reply("You have been disapproved and removed from the authorized users list.")
-
+    else:
+        remove_approved_user(user_id)
+        message.reply("You have been disapproved and removed from the authorized users list.")
+    message.delete()
 
 userbot.run()
