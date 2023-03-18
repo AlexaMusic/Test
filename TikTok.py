@@ -64,48 +64,34 @@ async def handle_message(client: userbot, message: Message):
     sender_name = message.from_user.first_name
     user_msg = message.text
     user_unme = message.from_user.username
-    if is_approved(user_id):
-        await userbot.send_message(
-            LOG_GROUP,
-            f"{sender_name} sent a message, username: @{user_unme}, message: {user_msg}",
-        )
-        return
+    await userbot.send_message(LOG_GROUP, f"{sender_name} sent a message, username: @{user_unme}, message: {user_msg}")
+    increment_user_message_count(user_id)
+    message_count = get_user_message_count(user_id)
+    if message_count >= WARNING_LIMIT:
+        if is_approved(user_id):
+            reset_user_message_count(user_id)
+        else:
+            await message.reply(f"Warning! You are not an approved user so you have a limitation on the number of messages you can send. You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages.")
+    if message_count >= WARNING_LIMIT + 1:
+        await userbot.block_user(user_id)
+        await message.reply("You have been blocked for sending too many messages.")
+        return        
     text = message.text.lower()
     if any(word in text for word in JHANTO_LOG_WORD):
         await userbot.block_user(user_id)
         await message.reply("You have been blocked for using inappropriate language.")
-        return
-    message_count = increment_user_message_count(user_id)
-    if message_count is None:
-        message_count = 0
-    if message_count >= WARNING_LIMIT + 1:
-        await userbot.block_user(user_id)
-        await message.reply("You have been blocked for sending too many messages.")
-        return
-    if message_count >= WARNING_LIMIT:
-        await message.reply(
-            f"Warning! You are not an approved user so you have a limitation on the number of messages you can send. You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages."
-        )
-    elif message_count >= WARNING_LIMIT:
-        await message.reply(
-            f"Warning! You have sent {message_count} messages. You will be blocked after {WARNING_LIMIT} messages."
-        )
-        return
-    await userbot.send_message(
-        LOG_GROUP,
-        f"{sender_name} sent a message, username: @{user_unme}, message: {user_msg}",
-    )
 
-@userbot.on_message(filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private)
+@userbot.on_message(
+    filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private
+)
 def approve_command_handler(client: userbot, message: Message):
-    if message.from_user.id != client.me.id:
-        user_id = message.chat.id
-        if is_approved(user_id):
-            message.reply("You are already an approved user.")
-        else:
-            add_approved_user(user_id)
-            message.reply("You have been approved as an authorized user.")
-        message.delete()
+    user_id = message.chat.id
+    if is_approved(user_id):
+        message.reply("You are already an approved user.")
+    else:
+        add_approved_user(user_id)
+        message.reply("You have been approved as an authorized user.")
+    message.delete()
 
 @userbot.on_message(
     filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
