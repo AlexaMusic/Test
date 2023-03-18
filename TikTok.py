@@ -78,7 +78,7 @@ async def handle_message(client: userbot, message: Message):
         await userbot.block_user(user_id)
         await message.reply("You have been blocked for using inappropriate language.")
 
-@userbot.on_message(filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private)
+@userbot.on_message(filters.command(["a", "approve"], CMD_HANDLER) & filters.me & filters.private & ~filters.edited)
 def approve_command_handler(client: userbot, message: Message):
     user_id = message.chat.id
     if is_approved(user_id):
