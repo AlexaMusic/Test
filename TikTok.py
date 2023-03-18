@@ -82,23 +82,20 @@ async def handle_message(client: userbot, message: Message):
 def approve_command_handler(client: userbot, message: Message):
     user_id = message.chat.id
     if is_approved(user_id):
-        reset_user_message_count(user_id)
         message.reply("You are already an approved user.")
-    else:
-        add_approved_user(user_id)
-        message.reply("You have been approved as an authorized user.")
+        return
+    add_approved_user(user_id)
+    message.reply("You have been approved as an authorized user.")
     message.delete()
 
-@userbot.on_message(
-    filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private
-)
+@userbot.on_message(filters.command(["d", "disapprove"], CMD_HANDLER) & filters.me & filters.private)
 def disapprove_command_handler(client: userbot, message: Message):
     user_id = message.chat.id
     if not is_approved(user_id):
         message.reply("You are not an approved user.")
-    else:
-        remove_approved_user(user_id)
-        message.reply("You have been disapproved and removed from the authorized users list.")
+        return
+    remove_approved_user(user_id)
+    message.reply("You have been disapproved and removed from the authorized users list.")
     message.delete()
 
 print(f"Userbot is running")      
